@@ -1,5 +1,9 @@
 # KRYPT
 
+### Styling:
+
+[CSS Hero](https://www.csshero.org/mesher/)
+
 ### Dependencies:
 
 [React-Icons](<https://react-icons.github.io/react-icons/#:~:text=Installation%20(for%20standard%20modern%20project)>)
