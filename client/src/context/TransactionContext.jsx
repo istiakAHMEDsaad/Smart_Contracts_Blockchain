@@ -21,13 +21,40 @@ const createEthereumContract = () => {
 };
 
 export const TransactionsProvider = ({ children }) => {
+  const [formData, setformData] = useState({
+    addressTo: '',
+    amount: '',
+    keyword: '',
+    message: '',
+  });
   const [currentAccount, setCurrentAccount] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [transactionCount, setTransactionCount] = useState(
+    localStorage.getItem('transactionCount')
+  );
+  const [transactions, setTransactions] = useState([]);
+
+  const handleChange = (e, name) => {
+    setformData((prevState) => ({ ...prevState, [name]: e.target.value }));
+  };
 
   const checkIfWalletIsConnected = async () => {
-    if (!ethereum) return toast.warn('Please install metamask');
+    try {
+      if (!ethereum) return toast.warn('Please install metamask');
 
-    const accounts = await ethereum.request({ method: 'eth_accounts' });
-    console.log(accounts);
+      const accounts = await ethereum.request({ method: 'eth_accounts' });
+
+      if (accounts.length) {
+        setCurrentAccount(accounts[0]);
+
+        // getAllTransactions();
+      } else {
+        toast.error('No account found');
+      }
+    } catch (error) {
+      console.log(error);
+      throw new Error('No etherum object.');
+    }
   };
 
   const connectWallet = async () => {
@@ -37,7 +64,19 @@ export const TransactionsProvider = ({ children }) => {
       const accounts = await ethereum.request({
         method: 'eth_requestAccounts',
       });
+
       setCurrentAccount(accounts[0]);
+    } catch (error) {
+      console.log(error);
+      throw new Error('No etherum object.');
+    }
+  };
+
+  const sendTransaction = async () => {
+    try {
+      if (!ethereum) return toast.warn('Please install metamask');
+
+      // get data from the form...
     } catch (error) {
       console.log(error);
       throw new Error('No etherum object.');
@@ -48,8 +87,17 @@ export const TransactionsProvider = ({ children }) => {
     checkIfWalletIsConnected();
   }, []);
 
+  const value = {
+    connectWallet,
+    currentAccount,
+    formData,
+    setformData,
+    handleChange,
+    sendTransaction
+  };
+
   return (
-    <TransactionContext.Provider value={{ connectWallet }}>
+    <TransactionContext.Provider value={value}>
       {children}
     </TransactionContext.Provider>
   );
