@@ -77,6 +77,9 @@ export const TransactionsProvider = ({ children }) => {
       if (!ethereum) return toast.warn('Please install metamask');
 
       // get data from the form...
+      const { addressTo, amount, keyword, message } = formData;
+
+      createEthereumContract();
     } catch (error) {
       console.log(error);
       throw new Error('No etherum object.');
@@ -93,7 +96,7 @@ export const TransactionsProvider = ({ children }) => {
     formData,
     setformData,
     handleChange,
-    sendTransaction
+    sendTransaction,
   };
 
   return (
