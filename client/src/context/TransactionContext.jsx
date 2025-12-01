@@ -79,7 +79,7 @@ export const TransactionsProvider = ({ children }) => {
       // get data from the form...
       const { addressTo, amount, keyword, message } = formData;
 
-      const transactionContact = createEthereumContract();
+      const transactionsContract = createEthereumContract();
 
       const parsedAmount = ethers.utils.parseEther(amount);
 
@@ -94,6 +94,22 @@ export const TransactionsProvider = ({ children }) => {
           },
         ],
       });
+
+      const transactionHash = await transactionsContract.addToBlockchain(
+        addressTo,
+        parsedAmount,
+        message,
+        keyword
+      );
+
+      setIsLoading(true);
+      console.log(`Loading - ${transactionHash.hash}`);
+      await transactionHash.wait();
+      setIsLoading(false);
+      console.log(`Success - ${transactionHash.hash}`);
+
+      const transactionsCount = await transactionsContract.getTransactionCount();
+      setTransactionCount(transactionsCount.toNumber())
     } catch (error) {
       console.log(error);
       throw new Error('No etherum object.');
