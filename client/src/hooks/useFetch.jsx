@@ -21,7 +21,7 @@ const useFetch = ({ keyword }) => {
         setGifURL(
           'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMTEwcjgzY3Z3Nzd5dzAwamJrcWkzM2hpeWNjMWV5cnBjZW1hZHgybyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/fV8iuSEwLQ6005diSh/giphy.gif'
         );
-        toast.error(error.message);
+        console.error(error);
       }
     };
 
