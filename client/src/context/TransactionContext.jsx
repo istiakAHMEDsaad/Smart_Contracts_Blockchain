@@ -83,6 +83,7 @@ export const TransactionsProvider = ({ children }) => {
 
       const parsedAmount = ethers.utils.parseEther(amount);
 
+      // Send ETH using MetaMask
       await ethereum.request({
         method: 'eth_sendTransaction',
         params: [
@@ -95,6 +96,7 @@ export const TransactionsProvider = ({ children }) => {
         ],
       });
 
+      // Call the smart contract
       const transactionHash = await transactionsContract.addToBlockchain(
         addressTo,
         parsedAmount,
@@ -104,12 +106,31 @@ export const TransactionsProvider = ({ children }) => {
 
       setIsLoading(true);
       console.log(`Loading - ${transactionHash.hash}`);
+
       await transactionHash.wait();
+
+      // loading
       setIsLoading(false);
       console.log(`Success - ${transactionHash.hash}`);
 
-      const transactionsCount = await transactionsContract.getTransactionCount();
-      setTransactionCount(transactionsCount.toNumber())
+      // count the number
+      const transactionsCount =
+        await transactionsContract.getTransactionCount();
+
+      setTransactionCount(transactionsCount.toNumber());
+
+      // Save transaction hash into our state
+      // const newTx = {
+      //   addressFrom: currentAccount,
+      //   addressTo,
+      //   amount,
+      //   keyword,
+      //   message,
+      //   timestamp: new Date().toISOString(),
+      //   transactionHash: transactionHash.hash,
+      // };
+
+      // setTransactions((prev) => [newTx, ...prev]);
     } catch (error) {
       console.log(error);
       throw new Error('No etherum object.');
@@ -127,6 +148,7 @@ export const TransactionsProvider = ({ children }) => {
     setformData,
     handleChange,
     sendTransaction,
+    transactions
   };
 
   return (
