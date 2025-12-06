@@ -110,24 +110,28 @@ const Welcome = () => {
               placeholder='Address To'
               name='addressTo'
               type='text'
+              value={formData.addressTo}
               handleChange={handleChange}
             />
             <Input
               placeholder='Amount'
               name='amount'
               type='number'
+              value={formData.amount}
               handleChange={handleChange}
             />
             <Input
               placeholder='Keyword (Gif)'
               name='keyword'
               type='text'
+              value={formData.keyword}
               handleChange={handleChange}
             />
             <Input
               placeholder='Enter Message'
               name='message'
               type='text'
+              value={formData.message}
               handleChange={handleChange}
             />
 

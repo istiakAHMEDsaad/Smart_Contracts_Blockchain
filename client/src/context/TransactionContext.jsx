@@ -60,14 +60,12 @@ export const TransactionsProvider = ({ children }) => {
           })
         );
 
-        console.log(structuredTransactions);
-
         setTransactions(structuredTransactions);
       } else {
-        console.log('Ethereum is not present');
+        toast.warn('Ethereum is not present');
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
     }
   };
 
@@ -85,7 +83,7 @@ export const TransactionsProvider = ({ children }) => {
         toast.error('No account found');
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
       throw new Error('No etherum object.');
     }
   };
@@ -115,7 +113,7 @@ export const TransactionsProvider = ({ children }) => {
 
       setCurrentAccount(accounts[0]);
     } catch (error) {
-      console.log(error);
+      if (error) toast.error('No etherum object');
       throw new Error('No etherum object.');
     }
   };
@@ -153,14 +151,12 @@ export const TransactionsProvider = ({ children }) => {
       );
 
       setIsLoading(true);
-      console.log(`Loading - ${transactionHash.hash}`);
 
       await transactionHash.wait();
 
       // loading
       setIsLoading(false);
-      toast.success('Successfully send!')
-      console.log(`Success - ${transactionHash.hash}`);
+      toast.success('Send successfully');
 
       // count the number
       const transactionsCount =
@@ -168,20 +164,16 @@ export const TransactionsProvider = ({ children }) => {
 
       setTransactionCount(transactionsCount.toNumber());
 
-      // Save transaction hash into our state
-      // const newTx = {
-      //   addressFrom: currentAccount,
-      //   addressTo,
-      //   amount,
-      //   keyword,
-      //   message,
-      //   timestamp: new Date().toISOString(),
-      //   transactionHash: transactionHash.hash,
-      // };
+      setformData({
+        addressTo: '',
+        amount: '',
+        keyword: '',
+        message: '',
+      });
 
-      // setTransactions((prev) => [newTx, ...prev]);
+      getAllTransactions();
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
       throw new Error('No etherum object.');
     }
   };
@@ -199,7 +191,7 @@ export const TransactionsProvider = ({ children }) => {
     handleChange,
     sendTransaction,
     transactions,
-    isLoading
+    isLoading,
   };
 
   return (
