@@ -38,6 +38,39 @@ export const TransactionsProvider = ({ children }) => {
     setformData((prevState) => ({ ...prevState, [name]: e.target.value }));
   };
 
+  const getAllTransactions = async () => {
+    try {
+      if (!ethereum) return toast.error('Please install metamask!');
+      if (ethereum) {
+        const transactionsContract = createEthereumContract();
+
+        const availableTransactions =
+          await transactionsContract.getAllTransactions();
+
+        const structuredTransactions = availableTransactions.map(
+          (transaction) => ({
+            addressTo: transaction.receiver,
+            addressFrom: transaction.sender,
+            timestamp: new Date(
+              transaction.timestamp.toNumber() * 1000
+            ).toLocaleString(),
+            message: transaction.message,
+            keyword: transaction.keyword,
+            amount: parseInt(transaction.amount._hex) / 10 ** 18,
+          })
+        );
+
+        console.log(structuredTransactions);
+
+        setTransactions(structuredTransactions);
+      } else {
+        console.log('Ethereum is not present');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const checkIfWalletIsConnected = async () => {
     try {
       if (!ethereum) return toast.warn('Please install metamask');
@@ -47,7 +80,7 @@ export const TransactionsProvider = ({ children }) => {
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
 
-        // getAllTransactions();
+        getAllTransactions();
       } else {
         toast.error('No account found');
       }
@@ -55,6 +88,21 @@ export const TransactionsProvider = ({ children }) => {
       console.log(error);
       throw new Error('No etherum object.');
     }
+  };
+
+  const checkIfTransactionsExists = async () => {
+    try {
+      if (ethereum) {
+        const transactionsContract = createEthereumContract();
+        const currentTransactionCount =
+          await transactionsContract.getTransactionCount();
+
+        window.localStorage.setItem(
+          'transactionCount',
+          currentTransactionCount
+        );
+      }
+    } catch (error) {}
   };
 
   const connectWallet = async () => {
@@ -111,6 +159,7 @@ export const TransactionsProvider = ({ children }) => {
 
       // loading
       setIsLoading(false);
+      toast.success('Successfully send!')
       console.log(`Success - ${transactionHash.hash}`);
 
       // count the number
@@ -139,6 +188,7 @@ export const TransactionsProvider = ({ children }) => {
 
   useEffect(() => {
     checkIfWalletIsConnected();
+    checkIfTransactionsExists();
   }, []);
 
   const value = {
@@ -148,7 +198,8 @@ export const TransactionsProvider = ({ children }) => {
     setformData,
     handleChange,
     sendTransaction,
-    transactions
+    transactions,
+    isLoading
   };
 
   return (
